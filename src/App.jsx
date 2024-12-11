@@ -1,10 +1,11 @@
 import {useState, useEffect} from 'react'
 import './App.css'
 import {auth, logOut, signIn, signUp} from "./firebase_backend_methods.js";
+import { getUserById } from './api_calls.js';
 
 function App() {
     const [signedIn, setSignedIn] = useState(false)
-    const [user, setUser] = useState(null)
+    const [user, setUser] = useState({});
     const [currentPage, setCurrentPage] = useState("Landing")
 
 
@@ -16,13 +17,17 @@ function App() {
 
     // Listen to auth state changes
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged(user => {
+        const unsubscribe = auth.onAuthStateChanged(gotten => {
+            getUserById(gotten.uid).then((data) => {
+                setUser(data.user);
+                console.log(data.user)
+            }).catch((error) => {
+                console.error(error);
+            });
             if (user) {
-                setUser(user);
                 setSignedIn(true);
-            } else {
-                setUser(null);
-                setSignedIn(false);
+                
+                
             }
         });
 
@@ -34,7 +39,8 @@ function App() {
         return (
             <>
                 <h1>Shop Hebron</h1>
-                <div>{user.uid}</div>
+                <div>{user.name}</div>
+                <div>{user.id}</div>
                 <button onClick={() => logOut()}>LogOut</button>
             </>
         )

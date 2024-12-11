@@ -94,6 +94,8 @@ export const signUp = async (username, email, password, role) => {
             },
             roleData: role.toLowerCase() === "admin" ? Admin : role.toLowerCase() === "seller" ? Seller : Buyer,
         };
+        console.log("New User Created")
+        console.log(newUser)
 
         // Add to Firestore
         await setDoc(doc(db, "Users", userId), newUser);
